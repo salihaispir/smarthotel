@@ -44,11 +44,34 @@ stages:
   displayName: Deploy stage
   dependsOn: Build
   jobs:
-  - deployment: Deploy
+  - deployment: Deploy 1
     displayName: Deploy job 1
     pool:
       vmImage: $(vmImageName)
     environment: 'shasb.aksnamespace'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              artifactName: 'manifests'
+              downloadPath: '$(System.ArtifactsDirectory)/manifests'
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: $(aksk8sNamespace)
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/*
+              containers: |
+                $(imageRepository):$(tag)
+  - deployment: Deploy 2
+    displayName: Deploy job 1
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'shasb.gkenamespace'
     strategy:
       runOnce:
         deploy:
