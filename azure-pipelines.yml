@@ -44,8 +44,8 @@ stages:
   displayName: Deploy stage
   dependsOn: Build
   jobs:
-  - deployment: Deploy 1
-    displayName: Deploy job 1
+  - deployment: Deploy1
+    displayName: Deploy to AKS
     pool:
       vmImage: $(vmImageName)
     environment: 'shasb.aksnamespace'
@@ -67,8 +67,8 @@ stages:
                 $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
-  - deployment: Deploy 2
-    displayName: Deploy job 1
+  - deployment: Deploy2
+    displayName: Deploy to GKE
     pool:
       vmImage: $(vmImageName)
     environment: 'shasb.gkenamespace'
