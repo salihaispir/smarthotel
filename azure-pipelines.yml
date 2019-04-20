@@ -6,7 +6,7 @@ resources:
 
 variables:
   dockerRegistryServiceConnection: 'shasbDockerHub'
-  imageRepository: 'shashankbarsin/builddemo'
+  imageRepository: 'shashankbarsin/bootcamp-demo'
   dockerfilePath: '**/app/Dockerfile'
   tag: '$(Build.BuildId)'
   
