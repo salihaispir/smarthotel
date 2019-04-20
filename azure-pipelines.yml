@@ -7,7 +7,6 @@ resources:
 variables:
   dockerRegistryServiceConnection: 'shasbDockerHub'
   imageRepository: 'shashankbarsin/builddemo'
-  containerRegistry: 'index.dockerhub.io'
   dockerfilePath: '**/app/Dockerfile'
   tag: '$(Build.BuildId)'
   
@@ -67,4 +66,4 @@ stages:
               manifests: |
                 $(System.ArtifactsDirectory)/manifests/*
               containers: |
-                $(containerRegistry)/$(imageRepository):$(tag)
+                $(imageRepository):$(tag)
