@@ -108,6 +108,7 @@ stages:
           - task: Kubernetes@1
             inputs:
               command: 'get'
+              namespace: $(openshiftproject)
               arguments: 'pods --insecure-skip-tls-verify'
               
           - task: KubernetesManifest@0
