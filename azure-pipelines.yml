@@ -13,6 +13,7 @@ variables:
   # Kubernetes Namespace
   aksk8sNamespace: 'aksnamespace'
   gkek8sNamespace: 'gkenamespace'
+  eksk8sNamespace: 'gkenamespace'
   openshiftproject: 'openshiftproject'
 
   # Agent VM image name
@@ -88,6 +89,29 @@ stages:
             inputs:
               action: deploy
               namespace: $(gkek8sNamespace)
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/*
+              containers: |
+                $(imageRepository):$(tag)
+  - deployment: DeployToEKS
+    displayName: Deploy to EKS
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'shasb.eksnamespace'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@1
+            inputs:
+              artifactName: 'manifests'
+              downloadPath: '$(System.ArtifactsDirectory)/manifests'
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              namespace: $(eksk8sNamespace)
               manifests: |
                 $(System.ArtifactsDirectory)/manifests/*
               containers: |
