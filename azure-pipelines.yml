@@ -13,7 +13,7 @@ variables:
   # Kubernetes Namespace
   aksk8sNamespace: 'aksnamespace'
   gkek8sNamespace: 'gkenamespace'
-  eksk8sNamespace: 'gkenamespace'
+  eksk8sNamespace: 'eksnamespace'
   openshiftproject: 'openshiftproject'
 
   # Agent VM image name
