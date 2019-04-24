@@ -67,7 +67,8 @@ stages:
               action: deploy
               namespace: $(aksk8sNamespace)
               manifests: |
-                $(System.ArtifactsDirectory)/manifests/*
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToGKE
@@ -90,7 +91,8 @@ stages:
               action: deploy
               namespace: $(gkek8sNamespace)
               manifests: |
-                $(System.ArtifactsDirectory)/manifests/*
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToEKS
@@ -113,7 +115,8 @@ stages:
               action: deploy
               namespace: $(eksk8sNamespace)
               manifests: |
-                $(System.ArtifactsDirectory)/manifests/*
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToOpenshift
@@ -141,6 +144,7 @@ stages:
               action: deploy
               namespace: $(openshiftproject)
               manifests: |
-                $(System.ArtifactsDirectory)/manifests/*
+                $(System.ArtifactsDirectory)/manifests/deployment.yml
+                $(System.ArtifactsDirectory)/manifests/service.yml
               containers: |
                 $(imageRepository):$(tag)
