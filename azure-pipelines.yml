@@ -68,9 +68,7 @@ stages:
             inputs:
               action: deploy
               namespace: $(aksk8sNamespace)
-              manifests: |
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
+              manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToGKE
@@ -92,9 +90,7 @@ stages:
             inputs:
               action: deploy
               namespace: $(gkek8sNamespace)
-              manifests: |
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
+              manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToEKS
@@ -116,9 +112,7 @@ stages:
             inputs:
               action: deploy
               namespace: $(eksk8sNamespace)
-              manifests: |
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
+              manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
   - deployment: DeployToOpenshift
@@ -145,8 +139,6 @@ stages:
             inputs:
               action: deploy
               namespace: $(openshiftproject)
-              manifests: |
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
-                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
+              manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
