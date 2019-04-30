@@ -113,25 +113,3 @@ stages:
               manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
-  - deployment:
-    displayName: Deploy to Openshift
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'shasb.openshiftproject'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@1
-            inputs:
-              artifactName: 'manifests'
-              downloadPath: '$(System.ArtifactsDirectory)/manifests'
-              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: deploy
-              namespace: $(openshiftproject)
-              manifests: $(System.ArtifactsDirectory)/manifests/*
-              containers: |
-                $(imageRepository):$(tag)
