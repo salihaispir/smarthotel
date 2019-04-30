@@ -47,7 +47,7 @@ stages:
   displayName: Deploy stage
   dependsOn: Build
   jobs:
-  - deployment: DeployToAKS
+  - deployment:
     displayName: Deploy to AKS
     pool:
       vmImage: $(vmImageName)
@@ -71,7 +71,7 @@ stages:
               manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
-  - deployment: DeployToGKE
+  - deployment:
     displayName: Deploy to GKE
     pool:
       vmImage: $(vmImageName)
@@ -93,7 +93,7 @@ stages:
               manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
-  - deployment: DeployToEKS
+  - deployment:
     displayName: Deploy to EKS
     pool:
       vmImage: $(vmImageName)
@@ -115,7 +115,7 @@ stages:
               manifests: $(System.ArtifactsDirectory)/manifests/*
               containers: |
                 $(imageRepository):$(tag)
-  - deployment: DeployToOpenshift
+  - deployment:
     displayName: Deploy to Openshift
     pool:
       vmImage: $(vmImageName)
