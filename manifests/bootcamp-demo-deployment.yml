@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: bootcamp-demo
-        image: shashankbarsin/bootcamp-demo
+        image: smarthotelacr.azurecr.io/bootcamp-demo
         imagePullPolicy: Always
         ports:
         - containerPort: 8000
