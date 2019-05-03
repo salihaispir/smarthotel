@@ -5,15 +5,18 @@ resources:
 - repo: self
 
 variables:
-  dockerRegistryServiceConnection: 'shasbDockerHub'
-  imageRepository: 'shashankbarsin/bootcamp-demo'
+  dockerRegistryServiceConnection: 'smarthotelacr'
+  imageRepository: 'bootcamp-demo'
+  containerRegistry: 'smarthotelacr.azurecr.io'
   dockerfilePath: '**/app/Dockerfile'
+  buildContext: 'app/'
   tag: '$(Build.BuildId)'
+
+  imagePullSecret: 'smarthotelacr'
   
   # Kubernetes Namespace
-  aksk8sNamespace: 'aksnamespace'
-  gkek8sNamespace: 'gkenamespace'
-  eksk8sNamespace: 'eksnamespace'
+  aksk8sNamespace: 'aks'
+  eksk8sNamespace: 'eks'
   openshiftproject: 'openshiftproject'
 
   # Agent VM image name
@@ -34,6 +37,7 @@ stages:
         command: buildAndPush
         repository: $(imageRepository)
         dockerfile: $(dockerfilePath)
+        buildContext: $(buildContext)
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
@@ -51,7 +55,7 @@ stages:
     displayName: Deploy to AKS
     pool:
       vmImage: $(vmImageName)
-    environment: 'shasb.aksnamespace'
+    environment: SmartHotel360.aks-smarthotel-build-2019
     strategy:
       runOnce:
         deploy:
@@ -60,42 +64,33 @@ stages:
             inputs:
               artifactName: 'manifests'
               downloadPath: '$(System.ArtifactsDirectory)/manifests'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              namespace: $(aksk8sNamespace)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
           
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               namespace: $(aksk8sNamespace)
-              manifests: $(System.ArtifactsDirectory)/manifests/*
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
               containers: |
-                $(imageRepository):$(tag)
-  - deployment:
-    displayName: Deploy to GKE
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'shasb.gkenamespace'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@1
-            inputs:
-              artifactName: 'manifests'
-              downloadPath: '$(System.ArtifactsDirectory)/manifests'
-              
-          - task: KubernetesManifest@0
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: deploy
-              namespace: $(gkek8sNamespace)
-              manifests: $(System.ArtifactsDirectory)/manifests/*
-              containers: |
-                $(imageRepository):$(tag)
+                $(containerRegistry)/$(imageRepository):$(tag)
+              imagePullSecrets: |
+                $(imagePullSecret)
+
   - deployment:
     displayName: Deploy to EKS
     pool:
       vmImage: $(vmImageName)
-    environment: 'shasb.eksnamespace'
+    environment: SmartHotel360.eks-smarthotel-build-2019
     strategy:
       runOnce:
         deploy:
@@ -104,20 +99,32 @@ stages:
             inputs:
               artifactName: 'manifests'
               downloadPath: '$(System.ArtifactsDirectory)/manifests'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              namespace: $(eksk8sNamespace)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               namespace: $(eksk8sNamespace)
-              manifests: $(System.ArtifactsDirectory)/manifests/*
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
               containers: |
-                $(imageRepository):$(tag)
+                $(containerRegistry)/$(imageRepository):$(tag)
+              imagePullSecrets: |
+                $(imagePullSecret)
   - deployment:
     displayName: Deploy to OpenShift
     pool:
       vmImage: $(vmImageName)
-    environment: 'shasb.openshiftproject'
+    environment: SmartHotel360.openshiftproject-smarthotel-build-2019
     strategy:
       runOnce:
         deploy:
@@ -126,12 +133,24 @@ stages:
             inputs:
               artifactName: 'manifests'
               downloadPath: '$(System.ArtifactsDirectory)/manifests'
+
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: createSecret
+              secretName: $(imagePullSecret)
+              namespace: $(openshiftproject)
+              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
               
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               namespace: $(openshiftproject)
-              manifests: $(System.ArtifactsDirectory)/manifests/*
+              manifests: |
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-deployment.yml
+                $(System.ArtifactsDirectory)/manifests/bootcamp-demo-service.yml
               containers: |
-                $(imageRepository):$(tag)
+                $(containerRegistry)/$(imageRepository):$(tag)
+              imagePullSecrets: |
+                $(imagePullSecret)
