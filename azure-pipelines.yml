@@ -65,7 +65,7 @@ stages:
               artifactName: 'manifests'
               downloadPath: '$(System.ArtifactsDirectory)/manifests'
               
-          - script: kubectl delete suggestions
+          - script: kubectl delete suggestions -n aks
 
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
